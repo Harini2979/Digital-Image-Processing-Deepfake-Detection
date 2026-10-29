@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Analysis Report | Digital Image Forensics
+    </title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+
+            margin: 0;
+
+            font-family:
+                Inter,
+                Segoe UI,
+                Arial,
+                sans-serif;
+
+            background:
+                #f1f5f9;
+
+            color:
+                #0f172a;
+        }
+
+
+        .topbar {
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #07152f,
+                    #174ea6
+                );
+
+            color: white;
+
+            padding:
+                25px 20px;
+
+            text-align: center;
+        }
+
+
+        .topbar h1 {
+
+            margin: 0 0 7px;
+
+            font-size: 27px;
+        }
+
+
+        .topbar p {
+
+            margin: 0;
+
+            color:
+                #bfdbfe;
+
+            font-size: 13px;
+        }
+
+
+        .container {
+
+            max-width:
+                1050px;
+
+            margin:
+                35px auto;
+
+            padding:
+                0 20px;
+        }
+
+
+        .card {
+
+            background: white;
+
+            border-radius: 18px;
+
+            padding: 28px;
+
+            margin-bottom: 20px;
+
+            border:
+                1px solid
+                #e2e8f0;
+
+            box-shadow:
+                0 12px 30px
+                rgba(15,23,42,.06);
+        }
+
+
+        .result {
+
+            text-align: center;
+
+            padding:
+                35px 20px;
+        }
+
+
+        .result h2 {
+
+            margin:
+                0 0 10px;
+
+            font-size: 30px;
+
+            color:
+                {% if 'Manipulated' in label %}
+                #dc2626;
+                {% else %}
+                #15803d;
+                {% endif %}
+        }
+
+
+        .confidence {
+
+            font-size: 15px;
+
+            color:
+                #64748b;
+        }
+
+
+        .report-image {
+
+            display: block;
+
+            width:
+                100%;
+
+            max-height:
+                500px;
+
+            object-fit:
+                contain;
+
+            background:
+                #f8fafc;
+
+            border-radius:
+                14px;
+
+            padding:
+                15px;
+        }
+
+
+        h2 {
+
+            font-size: 19px;
+
+            margin-top: 0;
+
+            margin-bottom: 18px;
+        }
+
+
+        table {
+
+            width: 100%;
+
+            border-collapse:
+                collapse;
+        }
+
+
+        th,
+        td {
+
+            padding:
+                13px 15px;
+
+            border-bottom:
+                1px solid
+                #e2e8f0;
+
+            text-align: left;
+
+            font-size: 13px;
+        }
+
+
+        th {
+
+            background:
+                #eff6ff;
+
+            color:
+                #1e3a8a;
+        }
+
+
+        .pipeline {
+
+            display:
+                grid;
+
+            gap: 10px;
+        }
+
+
+        .pipeline-item {
+
+            padding:
+                14px 18px;
+
+            border-radius:
+                10px;
+
+            background:
+                #f8fafc;
+
+            border:
+                1px solid
+                #e2e8f0;
+
+            font-size:
+                13px;
+
+            font-weight:
+                700;
+        }
+
+
+        .buttons {
+
+            display:
+                flex;
+
+            justify-content:
+                center;
+
+            gap: 12px;
+
+            flex-wrap: wrap;
+
+            margin-top:
+                25px;
+        }
+
+
+        .btn {
+
+            display:
+                inline-block;
+
+            padding:
+                13px 22px;
+
+            border-radius:
+                10px;
+
+            text-decoration:
+                none;
+
+            font-size:
+                13px;
+
+            font-weight:
+                800;
+        }
+
+
+        .download {
+
+            background:
+                #2563eb;
+
+            color:
+                white;
+        }
+
+
+        .back {
+
+            background:
+                #0f172a;
+
+            color:
+                white;
+        }
+
+
+        footer {
+
+            text-align:
+                center;
+
+            padding:
+                30px;
+
+            background:
+                #07152f;
+
+            color:
+                #cbd5e1;
+
+            font-size:
+                12px;
+        }
+
+
+        footer strong {
+
+            display:
+                block;
+
+            color:
+                white;
+
+            margin-bottom:
+                5px;
+        }
+
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header class="topbar">
+
+    <h1>
+        Digital Image Forensics
+    </h1>
+
+    <p>
+        CNN-Based Deepfake Detection using ResNet18
+    </p>
+
+</header>
+
+
+<main class="container">
+
+
+    <!-- RESULT -->
+
+    <section class="card result">
+
+        <h2>
+            {{ label }}
+        </h2>
+
+        <div class="confidence">
+
+            Model Confidence:
+            <strong>
+                {{ confidence }}%
+            </strong>
+
+        </div>
+
+    </section>
+
+
+    <!-- IMAGE -->
+
+    <section class="card">
+
+        <h2>
+            Analyzed Image
+        </h2>
+
+        <img
+            class="report-image"
+            src="{{ url_for(
+                'uploaded_file',
+                filename=filename
+            ) }}"
+            alt="Analyzed Image"
+        >
+
+    </section>
+
+
+    <!-- CHARACTERISTICS -->
+
+    <section class="card">
+
+        <h2>
+            Image Characteristics
+        </h2>
+
+
+        <table>
+
+            <tr>
+                <th>
+                    Parameter
+                </th>
+
+                <th>
+                    Value
+                </th>
+            </tr>
+
+
+            <tr>
+                <td>
+                    Width
+                </td>
+
+                <td>
+                    {{ metrics.width }} pixels
+                </td>
+            </tr>
+
+
+            <tr>
+                <td>
+                    Height
+                </td>
+
+                <td>
+                    {{ metrics.height }} pixels
+                </td>
+            </tr>
+
+
+            <tr>
+                <td>
+                    Megapixels
+                </td>
+
+                <td>
+                    {{ metrics.megapixels }}
+                </td>
+            </tr>
+
+
+            <tr>
+                <td>
+                    Brightness
+                </td>
+
+                <td>
+                    {{ metrics.brightness }}
+                </td>
+            </tr>
+
+
+            <tr>
+                <td>
+                    Contrast
+                </td>
+
+                <td>
+                    {{ metrics.contrast }}
+                </td>
+            </tr>
+
+
+            <tr>
+                <td>
+                    Sharpness
+                </td>
+
+                <td>
+                    {{ metrics.sharpness }}
+                </td>
+            </tr>
+
+
+            <tr>
+                <td>
+                    Edge Density
+                </td>
+
+                <td>
+                    {{ metrics.edge_density }}%
+                </td>
+            </tr>
+
+
+        </table>
+
+    </section>
+
+
+    <!-- PIPELINE -->
+
+    <section class="card">
+
+        <h2>
+            Processing Methodology
+        </h2>
+
+
+        <div class="pipeline">
+
+            <div class="pipeline-item">
+                01 · Original Image
+            </div>
+
+            <div class="pipeline-item">
+                02 · Image Preprocessing
+            </div>
+
+            <div class="pipeline-item">
+                03 · Resize to 224 × 224
+            </div>
+
+            <div class="pipeline-item">
+                04 · ImageNet Normalization
+            </div>
+
+            <div class="pipeline-item">
+                05 · ResNet18 Feature Extraction
+            </div>
+
+            <div class="pipeline-item">
+                06 · Deep Learning Classification
+            </div>
+
+            <div class="pipeline-item">
+                07 · Final Prediction
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- MODEL -->
+
+    <section class="card">
+
+        <h2>
+            Model Information
+        </h2>
+
+
+        <table>
+
+            <tr>
+
+                <td>
+                    Architecture
+                </td>
+
+                <td>
+                    ResNet18
+                </td>
+
+            </tr>
+
+
+            <tr>
+
+                <td>
+                    Approach
+                </td>
+
+                <td>
+                    CNN-based transfer learning
+                </td>
+
+            </tr>
+
+
+            <tr>
+
+                <td>
+                    Framework
+                </td>
+
+                <td>
+                    PyTorch
+                </td>
+
+            </tr>
+
+
+            <tr>
+
+                <td>
+                    Input Size
+                </td>
+
+                <td>
+                    224 × 224 pixels
+                </td>
+
+            </tr>
+
+
+            <tr>
+
+                <td>
+                    Classification
+                </td>
+
+                <td>
+                    Two-class image classification
+                </td>
+
+            </tr>
+
+
+            <tr>
+
+                <td>
+                    Classes
+                </td>
+
+                <td>
+                    Likely Authentic /
+                    Potentially Manipulated
+                </td>
+
+            </tr>
+
+        </table>
+
+    </section>
+
+
+    <!-- BUTTONS -->
+
+    <div class="buttons">
+
+        <a
+            href="{{ url_for(
+                'download_report',
+                filename=filename
+            ) }}"
+            class="btn download"
+        >
+            Download PDF Report
+        </a>
+
+
+        <a
+            href="/"
+            class="btn back"
+        >
+            Analyze Another Image
+        </a>
+
+    </div>
+
+
+</main>
+
+
+<footer>
+
+    <strong>
+        Digital Image Forensics
+    </strong>
+
+    Artificial Intelligence &amp; Machine Learning
+    &nbsp;•&nbsp;
+    ResNet18 CNN
+
+</footer>
+
+
+</body>
+
+</html>
+
