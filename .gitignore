@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+venv/
+.venv/
+
+# Local environment variables
+.env
+
+# Uploaded images and generated files
+uploads/
+ai_test_images/
+test_images/
+
+# Datasets
+dataset/
+dataset_v3/
+dataset_v4/
+
+# Jupyter
+.ipynb_checkpoints/
