@@ -1,0 +1,608 @@
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: linear-gradient(135deg, #0d252b, #123d45);
+    color: #18343b;
+    min-height: 100vh;
+}
+
+.container {
+    width: 92%;
+    max-width: 1150px;
+    margin: auto;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+header {
+    padding: 55px 0 35px;
+    color: white;
+}
+
+.small-title {
+    font-size: 14px;
+    letter-spacing: 3px;
+    font-weight: bold;
+    opacity: 0.8;
+    margin-bottom: 15px;
+}
+
+header h1 {
+    font-size: 48px;
+    margin-bottom: 15px;
+}
+
+header p {
+    font-size: 18px;
+    color: #d5e8eb;
+    max-width: 700px;
+    line-height: 1.6;
+}
+
+
+/* =========================
+   PROCESS STEPS
+========================= */
+
+.steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-bottom: 35px;
+}
+
+.step {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 22px;
+    border-radius: 16px;
+    color: white;
+}
+
+.step-icon {
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.step-number {
+    font-size: 12px;
+    opacity: 0.7;
+    margin-bottom: 6px;
+}
+
+.step h3 {
+    margin-bottom: 7px;
+}
+
+.step p {
+    color: #c9dfe2;
+    font-size: 14px;
+}
+
+
+/* =========================
+   CARD
+========================= */
+
+.card {
+    background: white;
+    border-radius: 22px;
+    padding: 35px;
+    margin-bottom: 28px;
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.18);
+}
+
+.section-number {
+    font-size: 12px;
+    color: #159a9c;
+    font-weight: bold;
+    letter-spacing: 2px;
+    margin-bottom: 7px;
+}
+
+.card h2 {
+    color: #18343b;
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    color: #71808a;
+    margin-bottom: 25px;
+}
+
+
+/* =========================
+   UPLOAD
+========================= */
+
+.upload-box {
+    border: 2px dashed #b9d9de;
+    border-radius: 18px;
+    padding: 35px;
+    text-align: center;
+    background: #f7fbfc;
+}
+
+.upload-icon {
+    font-size: 42px;
+    margin-bottom: 15px;
+}
+
+.upload-box h3 {
+    margin-bottom: 8px;
+}
+
+.upload-box p {
+    color: #71808a;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+input[type="file"] {
+    display: block;
+    width: 100%;
+    max-width: 500px;
+    margin: auto;
+    padding: 12px;
+    border: 1px solid #d6e6e9;
+    border-radius: 10px;
+    background: white;
+}
+
+.analyze-button {
+    margin-top: 20px;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 10px;
+    background: #159a9c;
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+.analyze-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(21, 154, 156, 0.25);
+}
+
+
+/* =========================
+   ERROR
+========================= */
+
+.error {
+    background: #fff0f0;
+    border: 1px solid #efb5b5;
+    color: #a33a3a;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+}
+
+
+/* =========================
+   IMAGE PREVIEW
+========================= */
+
+.image-preview {
+    position: relative;
+    margin-top: 25px;
+    text-align: center;
+    background: #f7fbfc;
+    border-radius: 18px;
+    padding: 20px;
+}
+
+.preview-label {
+    display: block;
+    font-size: 12px;
+    letter-spacing: 2px;
+    font-weight: bold;
+    color: #159a9c;
+    margin-bottom: 15px;
+}
+
+.image-preview img {
+    max-width: 100%;
+    max-height: 450px;
+    border-radius: 14px;
+    object-fit: contain;
+}
+
+
+/* =========================
+   DIP PROCESSING
+========================= */
+
+.dip-title {
+    margin-top: 35px;
+    margin-bottom: 20px;
+}
+
+.processing-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.processing-card {
+    background: #f7fbfc;
+    border: 1px solid #dcecef;
+    border-radius: 16px;
+    padding: 20px;
+}
+
+.processing-card h3 {
+    margin-bottom: 12px;
+}
+
+.processing-card img {
+    width: 100%;
+    height: 260px;
+    object-fit: contain;
+    background: #eaf1f3;
+    border-radius: 12px;
+    margin-bottom: 12px;
+}
+
+.processing-card p {
+    color: #71808a;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.stage-label {
+    color: #159a9c;
+    font-size: 11px;
+    letter-spacing: 2px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+
+/* =========================
+   DETECTION RESULT
+========================= */
+
+.result-card {
+    margin-top: 30px;
+    padding: 28px;
+    border-radius: 18px;
+    background: #eef8f8;
+    border: 1px solid #c9e6e7;
+    text-align: center;
+}
+
+.result-icon {
+    font-size: 40px;
+    margin-bottom: 10px;
+}
+
+.result-card h3 {
+    font-size: 27px;
+    margin: 10px 0;
+    color: #18343b;
+}
+
+.confidence {
+    color: #159a9c;
+    font-size: 17px;
+    font-weight: bold;
+}
+
+
+/* =========================
+   REPORT DOWNLOAD
+========================= */
+
+.report-download {
+    margin: 30px 0;
+    padding: 25px;
+    text-align: center;
+    background: #f7fbfc;
+    border: 1px solid #d5e8ed;
+    border-radius: 18px;
+}
+
+.report-button {
+    display: inline-block;
+    padding: 13px 24px;
+    background: #159a9c;
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: 0.25s ease;
+}
+
+.report-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(21, 154, 156, 0.25);
+}
+
+.report-download p {
+    margin-top: 12px;
+    font-size: 12px;
+    color: #71808a;
+}
+
+
+/* =========================
+   DIP DASHBOARD
+========================= */
+
+.dashboard {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 25px;
+}
+
+.metric {
+    background: #f7fbfc;
+    border: 1px solid #dcecef;
+    border-radius: 15px;
+    padding: 20px;
+}
+
+.metric-icon {
+    font-size: 24px;
+    margin-bottom: 12px;
+}
+
+.metric-name {
+    color: #71808a;
+    font-size: 13px;
+    margin-bottom: 7px;
+}
+
+.metric-value {
+    font-size: 22px;
+    font-weight: bold;
+    color: #18343b;
+}
+
+.metric-unit {
+    font-size: 12px;
+    color: #71808a;
+    margin-left: 3px;
+}
+
+
+/* =========================
+   PROCESSING PIPELINE
+========================= */
+
+.pipeline {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+    margin-top: 25px;
+}
+
+.pipeline-item {
+    background: #f7fbfc;
+    border: 1px solid #dcecef;
+    padding: 18px 10px;
+    border-radius: 13px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.pipeline-item span {
+    display: block;
+    font-size: 23px;
+    margin-bottom: 8px;
+}
+
+
+/* =========================
+   IMPORTANT NOTE
+========================= */
+
+.important-note {
+    margin-top: 30px;
+    padding: 20px;
+    background: #fff8e8;
+    border: 1px solid #f0dfb3;
+    border-radius: 15px;
+    color: #6b5a35;
+}
+
+.important-note strong {
+    display: block;
+    margin-bottom: 8px;
+}
+
+.important-note p {
+    line-height: 1.6;
+    font-size: 14px;
+}
+
+
+/* =========================
+   FOOTER
+========================= */
+
+footer {
+    text-align: center;
+    padding: 30px 0 45px;
+    color: #c9dfe2;
+    font-size: 13px;
+}
+
+
+/* =========================
+   RESPONSIVE DESIGN
+========================= */
+
+@media (max-width: 850px) {
+
+    header h1 {
+        font-size: 36px;
+    }
+
+    .steps,
+    .processing-grid,
+    .dashboard {
+        grid-template-columns: 1fr;
+    }
+
+    .pipeline {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+
+@media (max-width: 500px) {
+
+    .card {
+        padding: 22px;
+    }
+
+    .container {
+        width: 94%;
+    }
+
+    .pipeline {
+        grid-template-columns: 1fr;
+    }
+
+    header h1 {
+        font-size: 30px;
+    }
+}
+.about-project {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 22px;
+    padding: 35px;
+    margin-bottom: 28px;
+    color: white;
+}
+
+.about-project h2 {
+    color: white;
+    margin-bottom: 12px;
+}
+
+.about-project > p {
+    color: #d5e8eb;
+    line-height: 1.7;
+    max-width: 900px;
+}
+
+.about-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 25px;
+}
+
+.about-grid div {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 14px;
+    padding: 20px;
+}
+
+.about-grid strong {
+    display: block;
+    margin-bottom: 8px;
+    color: white;
+}
+
+.about-grid span {
+    display: block;
+    color: #c9dfe2;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+@media (max-width: 850px) {
+    .about-grid {
+        grid-template-columns: 1fr;
+    }
+}
+/* PROJECT METHODOLOGY */
+
+.methodology {
+    background: white;
+    border-radius: 22px;
+    padding: 35px;
+    margin-bottom: 28px;
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.18);
+}
+
+.methodology h2 {
+    color: #18343b;
+    margin-bottom: 10px;
+}
+
+.methodology-intro {
+    color: #71808a;
+    line-height: 1.7;
+    max-width: 900px;
+    margin-bottom: 28px;
+}
+
+.methodology-flow {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+
+.method-step {
+    background: #f7fbfc;
+    border: 1px solid #dcecef;
+    border-radius: 16px;
+    padding: 22px;
+    position: relative;
+    transition: 0.25s ease;
+}
+
+.method-step:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.10);
+}
+
+.method-icon {
+    font-size: 30px;
+    margin-bottom: 12px;
+}
+
+.method-number {
+    color: #159a9c;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    margin-bottom: 7px;
+}
+
+.method-step h3 {
+    color: #18343b;
+    margin-bottom: 9px;
+}
+
+.method-step p {
+    color: #71808a;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+@media (max-width: 850px) {
+    .methodology-flow {
+        grid-template-columns: 1fr;
+    }
+}
