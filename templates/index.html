@@ -1,0 +1,3425 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Deepfake Detection | Digital Image Processing</title>
+
+
+    <style>
+
+        /* =========================================================
+           RESET
+        ========================================================= */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+        :root {
+
+            --purple: #6C4CE6;
+            --purple-dark: #4B35A8;
+            --purple-light: #EEE9FF;
+            --purple-soft: #F7F4FF;
+
+            --background: #F5F4F9;
+            --white: #FFFFFF;
+
+            --text: #24212B;
+            --muted: #777381;
+
+            --border: #E7E3EF;
+
+            --green: #3FAE7A;
+            --green-bg: #EAF8F1;
+
+            --red: #D95F6A;
+            --red-bg: #FFF0F1;
+
+            --blue: #5B8DEF;
+            --blue-bg: #EEF4FF;
+
+            --shadow:
+                0 12px 35px rgba(45, 35, 75, 0.08);
+
+            --shadow-large:
+                0 25px 70px rgba(45, 35, 75, 0.12);
+        }
+
+
+        body {
+
+            font-family:
+                Inter,
+                "Segoe UI",
+                Roboto,
+                Arial,
+                sans-serif;
+
+            background:
+                radial-gradient(
+                    circle at 5% 0%,
+                    rgba(108, 76, 230, 0.12),
+                    transparent 28%
+                ),
+
+                radial-gradient(
+                    circle at 95% 10%,
+                    rgba(157, 124, 255, 0.10),
+                    transparent 25%
+                ),
+
+                var(--background);
+
+            color: var(--text);
+
+            min-height: 100vh;
+        }
+
+
+        /* =========================================================
+           TOP NAVIGATION
+        ========================================================= */
+
+        .topbar {
+
+            height: 74px;
+
+            background:
+                rgba(255,255,255,0.92);
+
+            border-bottom:
+                1px solid var(--border);
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            padding:
+                0 5%;
+
+            position: sticky;
+
+            top: 0;
+
+            z-index: 100;
+
+            backdrop-filter:
+                blur(14px);
+        }
+
+
+        .brand {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 13px;
+        }
+
+
+        .brand-icon {
+
+            width: 40px;
+
+            height: 40px;
+
+            border-radius: 12px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--purple),
+                    #8C73F2
+                );
+
+            color: white;
+
+            font-size: 19px;
+
+            font-weight: 800;
+
+            box-shadow:
+                0 8px 20px
+                rgba(108,76,230,0.22);
+        }
+
+
+        .brand-text strong {
+
+            display: block;
+
+            font-size: 15px;
+
+            color: var(--text);
+
+            letter-spacing: -0.2px;
+        }
+
+
+        .brand-text span {
+
+            display: block;
+
+            color: var(--muted);
+
+            font-size: 10px;
+
+            margin-top: 2px;
+
+            text-transform: uppercase;
+
+            letter-spacing: 1px;
+        }
+
+
+        .model-pill {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            padding:
+                8px 13px;
+
+            background:
+                var(--green-bg);
+
+            border:
+                1px solid #D5F0E2;
+
+            color:
+                #287A56;
+
+            border-radius:
+                999px;
+
+            font-size: 11px;
+
+            font-weight: 700;
+        }
+
+
+        .model-dot {
+
+            width: 7px;
+
+            height: 7px;
+
+            background:
+                var(--green);
+
+            border-radius: 50%;
+
+            box-shadow:
+                0 0 8px
+                rgba(63,174,122,0.7);
+        }
+
+
+        /* =========================================================
+           PAGE
+        ========================================================= */
+
+        .page {
+
+            width: 92%;
+
+            max-width: 1450px;
+
+            margin:
+                0 auto;
+
+            padding:
+                42px 0 60px;
+        }
+
+
+        /* =========================================================
+           HERO
+        ========================================================= */
+
+        .hero {
+
+            display: flex;
+
+            align-items: flex-end;
+
+            justify-content: space-between;
+
+            gap: 30px;
+
+            margin-bottom: 32px;
+        }
+
+
+        .hero-label {
+
+            color:
+                var(--purple);
+
+            font-size: 11px;
+
+            font-weight: 800;
+
+            letter-spacing: 2px;
+
+            text-transform: uppercase;
+
+            margin-bottom: 10px;
+        }
+
+
+        .hero h1 {
+
+            font-size:
+                clamp(34px, 4vw, 52px);
+
+            line-height: 1.05;
+
+            letter-spacing: -2px;
+
+            color:
+                var(--text);
+
+            font-weight: 800;
+        }
+
+
+        .hero p {
+
+            color:
+                var(--muted);
+
+            font-size: 14px;
+
+            line-height: 1.7;
+
+            max-width: 640px;
+
+            margin-top: 12px;
+        }
+
+
+        .hero-info {
+
+            min-width: 220px;
+
+            padding:
+                17px 19px;
+
+            background:
+                white;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 17px;
+
+            box-shadow:
+                var(--shadow);
+        }
+
+
+        .hero-info-label {
+
+            color:
+                var(--muted);
+
+            font-size: 10px;
+
+            font-weight: 700;
+
+            text-transform: uppercase;
+
+            letter-spacing: 1px;
+
+            margin-bottom: 7px;
+        }
+
+
+        .hero-info-value {
+
+            color:
+                var(--purple-dark);
+
+            font-size: 14px;
+
+            font-weight: 800;
+        }
+
+
+        /* =========================================================
+           WORKFLOW
+        ========================================================= */
+
+        .workflow {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 15px;
+
+            margin-bottom: 22px;
+        }
+
+
+        .workflow-card {
+
+            position: relative;
+
+            background:
+                white;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 18px;
+
+            padding:
+                19px;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 15px;
+
+            box-shadow:
+                var(--shadow);
+
+            overflow: hidden;
+
+            transition:
+                transform .25s ease,
+                border-color .25s ease,
+                box-shadow .25s ease;
+        }
+
+
+        .workflow-card:hover {
+
+            transform:
+                translateY(-3px);
+
+            border-color:
+                #CEC4F4;
+
+            box-shadow:
+                0 17px 40px
+                rgba(75,53,168,0.11);
+        }
+
+
+        .workflow-card.active {
+
+            border-color:
+                #C9BCF5;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #FFFFFF,
+                    #FBF9FF
+                );
+        }
+
+
+        .workflow-number {
+
+            position: absolute;
+
+            right: 16px;
+
+            top: 10px;
+
+            font-size: 31px;
+
+            font-weight: 900;
+
+            color:
+                rgba(108,76,230,0.07);
+        }
+
+
+        .workflow-icon {
+
+            flex-shrink: 0;
+
+            width: 47px;
+
+            height: 47px;
+
+            border-radius: 14px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background:
+                var(--purple-light);
+
+            color:
+                var(--purple);
+
+            font-size: 20px;
+
+            font-weight: 800;
+        }
+
+
+        .workflow-card:nth-child(2)
+        .workflow-icon {
+
+            background:
+                var(--blue-bg);
+
+            color:
+                var(--blue);
+        }
+
+
+        .workflow-card:nth-child(3)
+        .workflow-icon {
+
+            background:
+                var(--green-bg);
+
+            color:
+                var(--green);
+        }
+
+
+        .workflow-text h3 {
+
+            font-size: 14px;
+
+            margin-bottom: 4px;
+
+            color:
+                var(--text);
+        }
+
+
+        .workflow-text p {
+
+            font-size: 11px;
+
+            color:
+                var(--muted);
+
+            line-height: 1.5;
+        }
+
+
+        /* =========================================================
+           MAIN DASHBOARD
+        ========================================================= */
+
+        .dashboard {
+
+            display: grid;
+
+            grid-template-columns:
+                1fr 330px;
+
+            gap: 22px;
+
+            align-items: start;
+        }
+
+
+        .panel {
+
+            background:
+                white;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 22px;
+
+            box-shadow:
+                var(--shadow);
+
+            overflow: hidden;
+        }
+
+
+        .panel-header {
+
+            padding:
+                23px 25px;
+
+            border-bottom:
+                1px solid var(--border);
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 15px;
+        }
+
+
+        .panel-title {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 11px;
+        }
+
+
+        .panel-title-icon {
+
+            width: 35px;
+
+            height: 35px;
+
+            border-radius: 10px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background:
+                var(--purple-light);
+
+            color:
+                var(--purple);
+
+            font-size: 15px;
+
+            font-weight: 800;
+        }
+
+
+        .panel-title h2 {
+
+            font-size: 17px;
+
+            color:
+                var(--text);
+        }
+
+
+        .panel-title p {
+
+            font-size: 10px;
+
+            color:
+                var(--muted);
+
+            margin-top: 3px;
+        }
+
+
+        .panel-body {
+
+            padding:
+                25px;
+        }
+
+
+        /* =========================================================
+           UPLOAD
+        ========================================================= */
+
+        .upload-box {
+
+            min-height:
+                360px;
+
+            border:
+                2px dashed #DAD4EC;
+
+            border-radius:
+                19px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #FCFBFF,
+                    #F7F8FA
+                );
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            text-align: center;
+
+            cursor: pointer;
+
+            transition:
+                all .25s ease;
+        }
+
+
+        .upload-box:hover {
+
+            border-color:
+                var(--purple);
+
+            background:
+                #FAF8FF;
+        }
+
+
+        .upload-box.dragover {
+
+            border-color:
+                var(--purple);
+
+            background:
+                var(--purple-light);
+
+            transform:
+                scale(1.005);
+        }
+
+
+        .upload-content {
+
+            width: 100%;
+
+            padding: 35px;
+        }
+
+
+        .upload-icon {
+
+            width: 75px;
+
+            height: 75px;
+
+            margin:
+                0 auto 18px;
+
+            border-radius:
+                22px;
+
+            background:
+                var(--purple-light);
+
+            color:
+                var(--purple);
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 30px;
+
+            box-shadow:
+                0 12px 30px
+                rgba(108,76,230,0.12);
+        }
+
+
+        .upload-content h3 {
+
+            font-size: 19px;
+
+            color:
+                var(--text);
+
+            margin-bottom: 7px;
+        }
+
+
+        .upload-content p {
+
+            font-size: 12px;
+
+            color:
+                var(--muted);
+
+            margin-bottom: 18px;
+        }
+
+
+        .choose-btn {
+
+            display:
+                inline-flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            gap: 8px;
+
+            padding:
+                11px 18px;
+
+            background:
+                var(--purple);
+
+            color:
+                white;
+
+            border:
+                none;
+
+            border-radius:
+                11px;
+
+            font-size:
+                12px;
+
+            font-weight:
+                700;
+
+            cursor:
+                pointer;
+
+            box-shadow:
+                0 8px 20px
+                rgba(108,76,230,0.22);
+
+            transition:
+                all .2s ease;
+        }
+
+
+        .choose-btn:hover {
+
+            background:
+                var(--purple-dark);
+
+            transform:
+                translateY(-2px);
+        }
+
+
+        .selected-file {
+
+            display:
+                block;
+
+            min-height:
+                17px;
+
+            margin-top:
+                10px;
+
+            color:
+                var(--muted);
+
+            font-size:
+                11px;
+        }
+
+
+        #fileInput {
+
+            display:
+                none;
+        }
+
+
+        /* =========================================================
+           PREVIEW
+        ========================================================= */
+
+        .preview {
+
+            display:
+                none;
+
+            margin-top:
+                17px;
+
+            padding:
+                13px;
+
+            background:
+                #F8F7FA;
+
+            border:
+                1px solid var(--border);
+
+            border-radius:
+                15px;
+        }
+
+
+        .preview.show {
+
+            display:
+                block;
+        }
+
+
+        .preview-label {
+
+            color:
+                var(--purple-dark);
+
+            font-size:
+                10px;
+
+            font-weight:
+                800;
+
+            text-transform:
+                uppercase;
+
+            letter-spacing:
+                .8px;
+
+            margin-bottom:
+                9px;
+        }
+
+
+        .preview img {
+
+            width:
+                100%;
+
+            max-height:
+                240px;
+
+            object-fit:
+                contain;
+
+            border-radius:
+                10px;
+
+            background:
+                #ECEBF0;
+        }
+
+
+        /* =========================================================
+           ANALYZE BUTTON
+        ========================================================= */
+
+        .analyze-btn {
+
+            width:
+                100%;
+
+            margin-top:
+                17px;
+
+            padding:
+                14px;
+
+            border:
+                none;
+
+            border-radius:
+                12px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--purple),
+                    #8064EA
+                );
+
+            color:
+                white;
+
+            font-size:
+                13px;
+
+            font-weight:
+                800;
+
+            cursor:
+                pointer;
+
+            box-shadow:
+                0 10px 25px
+                rgba(108,76,230,0.20);
+
+            transition:
+                all .2s ease;
+        }
+
+
+        .analyze-btn:hover {
+
+            transform:
+                translateY(-2px);
+
+            box-shadow:
+                0 14px 30px
+                rgba(108,76,230,0.27);
+        }
+
+
+        .analyze-btn:disabled {
+
+            opacity:
+                .65;
+
+            cursor:
+                not-allowed;
+
+            transform:
+                none;
+        }
+
+
+        /* =========================================================
+           LOADING
+        ========================================================= */
+
+        .loading {
+
+            display:
+                none;
+
+            padding:
+                20px;
+
+            text-align:
+                center;
+
+            color:
+                var(--muted);
+
+            font-size:
+                11px;
+        }
+
+
+        .loading.show {
+
+            display:
+                block;
+        }
+
+
+        .spinner {
+
+            width:
+                25px;
+
+            height:
+                25px;
+
+            margin:
+                0 auto 9px;
+
+            border:
+                3px solid #E4DFF0;
+
+            border-top-color:
+                var(--purple);
+
+            border-radius:
+                50%;
+
+            animation:
+                spin .8s linear infinite;
+        }
+
+
+        @keyframes spin {
+
+            to {
+                transform:
+                    rotate(360deg);
+            }
+        }
+
+
+        /* =========================================================
+           SIDEBAR
+        ========================================================= */
+
+        .sidebar {
+
+            display:
+                flex;
+
+            flex-direction:
+                column;
+
+            gap:
+                16px;
+        }
+
+
+        .side-card {
+
+            background:
+                white;
+
+            border:
+                1px solid var(--border);
+
+            border-radius:
+                18px;
+
+            padding:
+                20px;
+
+            box-shadow:
+                var(--shadow);
+        }
+
+
+        .side-card h3 {
+
+            font-size:
+                13px;
+
+            color:
+                var(--text);
+
+            margin-bottom:
+                15px;
+        }
+
+
+        .status-large {
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                11px;
+
+            padding:
+                13px;
+
+            border-radius:
+                12px;
+
+            background:
+                var(--green-bg);
+
+            color:
+                #287A56;
+
+            font-size:
+                12px;
+
+            font-weight:
+                800;
+        }
+
+
+        .side-row {
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                space-between;
+
+            gap:
+                10px;
+
+            padding:
+                10px 0;
+
+            border-bottom:
+                1px solid #F0EDF4;
+        }
+
+
+        .side-row:last-child {
+
+            border-bottom:
+                none;
+
+            padding-bottom:
+                0;
+        }
+
+
+        .side-row span:first-child {
+
+            color:
+                var(--muted);
+
+            font-size:
+                11px;
+        }
+
+
+        .side-row span:last-child {
+
+            color:
+                var(--text);
+
+            font-size:
+                11px;
+
+            font-weight:
+                800;
+
+            text-align:
+                right;
+        }
+
+
+        .pipeline {
+
+            display:
+                flex;
+
+            flex-direction:
+                column;
+
+            gap:
+                0;
+        }
+
+
+        .pipeline-item {
+
+            display:
+                flex;
+
+            gap:
+                11px;
+
+            position:
+                relative;
+
+            padding-bottom:
+                15px;
+        }
+
+
+        .pipeline-item:last-child {
+
+            padding-bottom:
+                0;
+        }
+
+
+        .pipeline-item:not(:last-child)::before {
+
+            content:
+                "";
+
+            position:
+                absolute;
+
+            left:
+                9px;
+
+            top:
+                21px;
+
+            height:
+                calc(100% - 7px);
+
+            width:
+                1px;
+
+            background:
+                #DED8EB;
+        }
+
+
+        .pipeline-dot {
+
+            position:
+                relative;
+
+            z-index:
+                2;
+
+            width:
+                19px;
+
+            height:
+                19px;
+
+            flex-shrink:
+                0;
+
+            border-radius:
+                50%;
+
+            background:
+                var(--purple-light);
+
+            color:
+                var(--purple);
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            font-size:
+                8px;
+
+            font-weight:
+                800;
+        }
+
+
+        .pipeline-item strong {
+
+            display:
+                block;
+
+            font-size:
+                11px;
+
+            color:
+                var(--text);
+
+            margin-bottom:
+                2px;
+        }
+
+
+        .pipeline-item span {
+
+            display:
+                block;
+
+            font-size:
+                10px;
+
+            color:
+                var(--muted);
+        }
+
+
+        /* =========================================================
+           RESULTS
+        ========================================================= */
+
+        .results-section {
+
+            margin-top:
+                22px;
+
+            background:
+                white;
+
+            border:
+                1px solid var(--border);
+
+            border-radius:
+                22px;
+
+            box-shadow:
+                var(--shadow-large);
+
+            overflow:
+                hidden;
+        }
+
+
+        .results-header {
+
+            padding:
+                23px 25px;
+
+            border-bottom:
+                1px solid var(--border);
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                space-between;
+
+            gap:
+                20px;
+        }
+
+
+        .results-header h2 {
+
+            font-size:
+                19px;
+
+            color:
+                var(--text);
+        }
+
+
+        .results-header p {
+
+            font-size:
+                11px;
+
+            color:
+                var(--muted);
+
+            margin-top:
+                4px;
+        }
+
+
+        .result-badge {
+
+            padding:
+                10px 15px;
+
+            border-radius:
+                999px;
+
+            font-size:
+                11px;
+
+            font-weight:
+                800;
+
+            white-space:
+                nowrap;
+        }
+
+
+        .result-authentic {
+
+            background:
+                var(--green-bg);
+
+            color:
+                #287A56;
+        }
+
+
+        .result-manipulated {
+
+            background:
+                var(--red-bg);
+
+            color:
+                #C24D59;
+        }
+
+
+        .results-body {
+
+            padding:
+                25px;
+        }
+
+
+        /* =========================================================
+           RESULT IMAGE CARDS
+        ========================================================= */
+
+        .image-grid {
+
+            display:
+                grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap:
+                16px;
+        }
+
+
+        .image-card {
+
+            border:
+                1px solid var(--border);
+
+            border-radius:
+                16px;
+
+            overflow:
+                hidden;
+
+            background:
+                white;
+        }
+
+
+        .image-card-head {
+
+            padding:
+                12px 14px;
+
+            border-bottom:
+                1px solid var(--border);
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                space-between;
+        }
+
+
+        .image-card-head strong {
+
+            font-size:
+                11px;
+
+            color:
+                var(--text);
+        }
+
+
+        .image-card-number {
+
+            width:
+                25px;
+
+            height:
+                25px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            background:
+                var(--purple-light);
+
+            color:
+                var(--purple);
+
+            border-radius:
+                8px;
+
+            font-size:
+                9px;
+
+            font-weight:
+                800;
+        }
+
+
+        .image-container {
+
+            height:
+                280px;
+
+            padding:
+                10px;
+
+            background:
+                #F3F3F6;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+        }
+
+
+        .image-container img {
+
+            width:
+                100%;
+
+            height:
+                100%;
+
+            object-fit:
+                contain;
+
+            border-radius:
+                9px;
+
+            background:
+                #E7E7EB;
+        }
+
+
+        .image-error {
+
+            color:
+                #9A969F;
+
+            font-size:
+                11px;
+
+            text-align:
+                center;
+        }
+
+
+        /* =========================================================
+           RESULT SUMMARY
+        ========================================================= */
+
+        .result-summary {
+
+            display:
+                grid;
+
+            grid-template-columns:
+                1.2fr 1fr;
+
+            gap:
+                16px;
+
+            margin-top:
+                18px;
+        }
+
+
+        .prediction-card {
+
+            border:
+                1px solid var(--border);
+
+            border-radius:
+                16px;
+
+            padding:
+                20px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #FBFAFF,
+                    #F8F7FB
+                );
+        }
+
+
+        .prediction-label {
+
+            color:
+                var(--muted);
+
+            font-size:
+                10px;
+
+            font-weight:
+                800;
+
+            text-transform:
+                uppercase;
+
+            letter-spacing:
+                1px;
+
+            margin-bottom:
+                9px;
+        }
+
+
+        .prediction-value {
+
+            color:
+                var(--purple-dark);
+
+            font-size:
+                24px;
+
+            font-weight:
+                800;
+
+            letter-spacing:
+                -.7px;
+        }
+
+
+        .confidence {
+
+            margin-top:
+                14px;
+        }
+
+
+        .confidence-top {
+
+            display:
+                flex;
+
+            justify-content:
+                space-between;
+
+            margin-bottom:
+                7px;
+
+            font-size:
+                10px;
+
+            color:
+                var(--muted);
+
+            font-weight:
+                700;
+        }
+
+
+        .confidence-bar {
+
+            height:
+                8px;
+
+            background:
+                #E8E5EE;
+
+            border-radius:
+                99px;
+
+            overflow:
+                hidden;
+        }
+
+
+        .confidence-fill {
+
+            height:
+                100%;
+
+            width:
+                {{ confidence }}%;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    var(--purple),
+                    #9A83F1
+                );
+
+            border-radius:
+                inherit;
+        }
+
+
+        .model-card {
+
+            border:
+                1px solid var(--border);
+
+            border-radius:
+                16px;
+
+            padding:
+                20px;
+
+            background:
+                white;
+        }
+
+
+        .model-card-title {
+
+            font-size:
+                10px;
+
+            color:
+                var(--muted);
+
+            font-weight:
+                800;
+
+            text-transform:
+                uppercase;
+
+            letter-spacing:
+                1px;
+
+            margin-bottom:
+                14px;
+        }
+
+
+        .model-name {
+
+            font-size:
+                17px;
+
+            color:
+                var(--text);
+
+            font-weight:
+                800;
+
+            margin-bottom:
+                5px;
+        }
+
+
+        .model-description {
+
+            font-size:
+                10px;
+
+            color:
+                var(--muted);
+
+            line-height:
+                1.6;
+        }
+
+
+        /* =========================================================
+           METRICS
+        ========================================================= */
+
+        .section-heading {
+
+            margin-top:
+                25px;
+
+            margin-bottom:
+                13px;
+
+            font-size:
+                14px;
+
+            color:
+                var(--text);
+        }
+
+
+        .metrics {
+
+            display:
+                grid;
+
+            grid-template-columns:
+                repeat(6, 1fr);
+
+            gap:
+                11px;
+        }
+
+
+        .metric-card {
+
+            padding:
+                15px 12px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius:
+                13px;
+
+            background:
+                #FBFAFC;
+
+            text-align:
+                center;
+        }
+
+
+        .metric-label {
+
+            display:
+                block;
+
+            color:
+                #8C8892;
+
+            font-size:
+                8px;
+
+            font-weight:
+                800;
+
+            text-transform:
+                uppercase;
+
+            letter-spacing:
+                .6px;
+
+            margin-bottom:
+                7px;
+        }
+
+
+        .metric-value {
+
+            display:
+                block;
+
+            color:
+                var(--purple-dark);
+
+            font-size:
+                13px;
+
+            font-weight:
+                800;
+        }
+
+
+        /* =========================================================
+           REPORT ACTIONS
+        ========================================================= */
+
+        .report-actions {
+
+            display:
+                flex;
+
+            flex-wrap:
+                wrap;
+
+            gap:
+                10px;
+
+            margin-top:
+                22px;
+
+            padding-top:
+                20px;
+
+            border-top:
+                1px solid var(--border);
+        }
+
+
+        .report-btn {
+
+            text-decoration:
+                none;
+
+            display:
+                inline-flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            gap:
+                7px;
+
+            padding:
+                11px 17px;
+
+            border-radius:
+                10px;
+
+            font-size:
+                11px;
+
+            font-weight:
+                800;
+
+            transition:
+                all .2s ease;
+        }
+
+
+        .view-report {
+
+            background:
+                var(--purple-light);
+
+            color:
+                var(--purple-dark);
+        }
+
+
+        .download-report {
+
+            background:
+                var(--purple);
+
+            color:
+                white;
+
+            box-shadow:
+                0 8px 20px
+                rgba(108,76,230,0.18);
+        }
+
+
+        .report-btn:hover {
+
+            transform:
+                translateY(-2px);
+        }
+
+
+        /* =========================================================
+           FOOTER
+        ========================================================= */
+
+        footer {
+
+            text-align:
+                center;
+
+            color:
+                #96919F;
+
+            font-size:
+                10px;
+
+            padding-top:
+                25px;
+        }
+
+
+        /* =========================================================
+           RESPONSIVE
+        ========================================================= */
+
+        @media (max-width: 1100px) {
+
+            .dashboard {
+
+                grid-template-columns:
+                    1fr;
+            }
+
+
+            .sidebar {
+
+                display:
+                    grid;
+
+                grid-template-columns:
+                    repeat(3, 1fr);
+            }
+
+
+            .metrics {
+
+                grid-template-columns:
+                    repeat(3, 1fr);
+            }
+
+        }
+
+
+        @media (max-width: 800px) {
+
+            .topbar {
+
+                padding:
+                    0 4%;
+            }
+
+
+            .page {
+
+                width:
+                    94%;
+
+                padding-top:
+                    28px;
+            }
+
+
+            .hero {
+
+                flex-direction:
+                    column;
+
+                align-items:
+                    flex-start;
+            }
+
+
+            .workflow {
+
+                grid-template-columns:
+                    1fr;
+            }
+
+
+            .sidebar {
+
+                grid-template-columns:
+                    1fr;
+            }
+
+
+            .image-grid {
+
+                grid-template-columns:
+                    1fr;
+            }
+
+
+            .result-summary {
+
+                grid-template-columns:
+                    1fr;
+            }
+
+        }
+
+
+        @media (max-width: 550px) {
+
+            .brand-text {
+
+                display:
+                    none;
+            }
+
+
+            .model-pill {
+
+                font-size:
+                    9px;
+            }
+
+
+            .panel-body,
+            .results-body {
+
+                padding:
+                    17px;
+            }
+
+
+            .panel-header,
+            .results-header {
+
+                padding:
+                    18px;
+            }
+
+
+            .metrics {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+
+            .results-header {
+
+                flex-direction:
+                    column;
+
+                align-items:
+                    flex-start;
+            }
+
+
+            .image-container {
+
+                height:
+                    250px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================================================
+         TOP BAR
+    ========================================================== -->
+
+    <nav class="topbar">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                ◈
+            </div>
+
+            <div class="brand-text">
+
+                <strong>
+                    Digital Image Forensics
+                </strong>
+
+                <span>
+                    Deepfake Detection System
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="model-pill">
+
+            <span class="model-dot"></span>
+
+            ResNet18 Model Ready
+
+        </div>
+
+    </nav>
+
+
+
+    <div class="page">
+
+
+        <!-- =====================================================
+             HERO
+        ====================================================== -->
+
+        <section class="hero">
+
+            <div>
+
+                <div class="hero-label">
+                    Digital Image Processing
+                </div>
+
+                <h1>
+                    Deepfake Detection
+                </h1>
+
+                <p>
+                    Analyze digital images using image processing
+                    techniques, feature analysis and a
+                    ResNet18 convolutional neural network.
+                </p>
+
+            </div>
+
+
+            <div class="hero-info">
+
+                <div class="hero-info-label">
+                    Detection Pipeline
+                </div>
+
+                <div class="hero-info-value">
+                    DIP + CNN Analysis
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             WORKFLOW
+        ====================================================== -->
+
+        <section class="workflow">
+
+
+            <div class="workflow-card active">
+
+                <span class="workflow-number">
+                    01
+                </span>
+
+                <div class="workflow-icon">
+                    ↑
+                </div>
+
+                <div class="workflow-text">
+
+                    <h3>
+                        Upload Image
+                    </h3>
+
+                    <p>
+                        Select a JPG, JPEG or PNG image
+                        for forensic analysis.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="workflow-card">
+
+                <span class="workflow-number">
+                    02
+                </span>
+
+                <div class="workflow-icon">
+                    ◌
+                </div>
+
+                <div class="workflow-text">
+
+                    <h3>
+                        Analyze Image
+                    </h3>
+
+                    <p>
+                        Extract image characteristics
+                        and processing features.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="workflow-card">
+
+                <span class="workflow-number">
+                    03
+                </span>
+
+                <div class="workflow-icon">
+                    ⌕
+                </div>
+
+                <div class="workflow-text">
+
+                    <h3>
+                        Detect Manipulation
+                    </h3>
+
+                    <p>
+                        Generate a ResNet18 CNN
+                        classification result.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =====================================================
+             MAIN DASHBOARD
+        ====================================================== -->
+
+        <section class="dashboard">
+
+
+            <!-- =================================================
+                 UPLOAD PANEL
+            ================================================== -->
+
+            <div class="panel">
+
+
+                <div class="panel-header">
+
+                    <div class="panel-title">
+
+                        <div class="panel-title-icon">
+                            ↑
+                        </div>
+
+                        <div>
+
+                            <h2>
+                                Image Analysis Workspace
+                            </h2>
+
+                            <p>
+                                Upload an image to begin analysis
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="panel-body">
+
+
+                    <form
+                        id="uploadForm"
+                        action="{{ url_for('analyze') }}"
+                        method="POST"
+                        enctype="multipart/form-data"
+                    >
+
+
+                        <!-- =====================================
+                             UPLOAD BOX
+                        ====================================== -->
+
+                        <div
+                            class="upload-box"
+                            id="uploadArea"
+                        >
+
+                            <div class="upload-content">
+
+
+                                <div class="upload-icon">
+                                    ↑
+                                </div>
+
+
+                                <h3>
+                                    Select an image for analysis
+                                </h3>
+
+
+                                <p>
+                                    Supported formats:
+                                    JPG, JPEG and PNG
+                                </p>
+
+
+                                <button
+                                    type="button"
+                                    class="choose-btn"
+                                    id="chooseButton"
+                                >
+                                    Choose File
+                                </button>
+
+
+                                <span
+                                    class="selected-file"
+                                    id="fileName"
+                                >
+                                    No file chosen
+                                </span>
+
+
+                            </div>
+
+
+                            <input
+                                type="file"
+                                name="image"
+                                id="fileInput"
+                                accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+                            >
+
+                        </div>
+
+
+
+                        <!-- =====================================
+                             PREVIEW
+                        ====================================== -->
+
+                        <div
+                            class="preview"
+                            id="previewSection"
+                        >
+
+                            <div class="preview-label">
+                                Selected Image
+                            </div>
+
+                            <img
+                                id="previewImage"
+                                alt="Selected image preview"
+                            >
+
+                        </div>
+
+
+
+                        <!-- =====================================
+                             ANALYZE
+                        ====================================== -->
+
+                        <button
+                            type="submit"
+                            class="analyze-btn"
+                            id="analyzeButton"
+                        >
+                            Analyze Image
+                        </button>
+
+
+                        <div
+                            class="loading"
+                            id="loading"
+                        >
+
+                            <div class="spinner"></div>
+
+                            Processing image...
+                            Please wait.
+
+                        </div>
+
+
+                    </form>
+
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 SIDEBAR
+            ================================================== -->
+
+            <aside class="sidebar">
+
+
+                <!-- MODEL STATUS -->
+
+                <div class="side-card">
+
+                    <h3>
+                        System Status
+                    </h3>
+
+
+                    <div class="status-large">
+
+                        <span class="model-dot"></span>
+
+                        Model loaded and ready
+
+                    </div>
+
+
+                    <div class="side-row">
+
+                        <span>
+                            Architecture
+                        </span>
+
+                        <span>
+                            ResNet18
+                        </span>
+
+                    </div>
+
+
+                    <div class="side-row">
+
+                        <span>
+                            Model Type
+                        </span>
+
+                        <span>
+                            CNN
+                        </span>
+
+                    </div>
+
+
+                    <div class="side-row">
+
+                        <span>
+                            Input Size
+                        </span>
+
+                        <span>
+                            224 × 224
+                        </span>
+
+                    </div>
+
+
+                    <div class="side-row">
+
+                        <span>
+                            Classes
+                        </span>
+
+                        <span>
+                            2
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- PIPELINE -->
+
+                <div class="side-card">
+
+                    <h3>
+                        Processing Pipeline
+                    </h3>
+
+
+                    <div class="pipeline">
+
+
+                        <div class="pipeline-item">
+
+                            <div class="pipeline-dot">
+                                1
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    Upload
+                                </strong>
+
+                                <span>
+                                    Image validation
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="pipeline-item">
+
+                            <div class="pipeline-dot">
+                                2
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    Grayscale
+                                </strong>
+
+                                <span>
+                                    Intensity processing
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="pipeline-item">
+
+                            <div class="pipeline-dot">
+                                3
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    Edge Detection
+                                </strong>
+
+                                <span>
+                                    Canny edge analysis
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="pipeline-item">
+
+                            <div class="pipeline-dot">
+                                4
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    Feature Analysis
+                                </strong>
+
+                                <span>
+                                    Image characteristics
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="pipeline-item">
+
+                            <div class="pipeline-dot">
+                                5
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    CNN Prediction
+                                </strong>
+
+                                <span>
+                                    ResNet18 classification
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+
+            </aside>
+
+
+        </section>
+
+
+
+        {% if filename %}
+
+
+        <!-- =====================================================
+             RESULTS
+        ====================================================== -->
+
+        <section class="results-section">
+
+
+            <div class="results-header">
+
+                <div>
+
+                    <h2>
+                        Forensic Analysis Results
+                    </h2>
+
+                    <p>
+                        Image processing and CNN prediction completed.
+                    </p>
+
+                </div>
+
+
+                {% if label == "Likely Authentic" %}
+
+                    <div class="result-badge result-authentic">
+                        ✓ Likely Authentic
+                    </div>
+
+                {% else %}
+
+                    <div class="result-badge result-manipulated">
+                        ⚠ Potentially Manipulated
+                    </div>
+
+                {% endif %}
+
+
+            </div>
+
+
+
+            <div class="results-body">
+
+
+                <!-- =================================================
+                     THREE IMAGES
+                ================================================== -->
+
+                <div class="image-grid">
+
+
+                    <!-- ORIGINAL -->
+
+                    <div class="image-card">
+
+                        <div class="image-card-head">
+
+                            <strong>
+                                Original Image
+                            </strong>
+
+                            <span class="image-card-number">
+                                01
+                            </span>
+
+                        </div>
+
+
+                        <div class="image-container">
+
+                            <img
+                                src="{{ url_for('uploaded_file', filename=filename) }}"
+                                alt="Original image"
+                                onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'image-error\'>Original image could not be loaded.</div>';"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- GRAYSCALE -->
+
+                    <div class="image-card">
+
+                        <div class="image-card-head">
+
+                            <strong>
+                                Grayscale
+                            </strong>
+
+                            <span class="image-card-number">
+                                02
+                            </span>
+
+                        </div>
+
+
+                        <div class="image-container">
+
+                            <img
+                                src="{{ url_for('processed_file', filename=gray_filename) }}"
+                                alt="Grayscale image"
+                                onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'image-error\'>Grayscale image could not be loaded.</div>';"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- EDGE -->
+
+                    <div class="image-card">
+
+                        <div class="image-card-head">
+
+                            <strong>
+                                Canny Edge Detection
+                            </strong>
+
+                            <span class="image-card-number">
+                                03
+                            </span>
+
+                        </div>
+
+
+                        <div class="image-container">
+
+                            <img
+                                src="{{ url_for('processed_file', filename=edge_filename) }}"
+                                alt="Canny edge detection image"
+                                onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'image-error\'>Edge image could not be loaded.</div>';"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- =================================================
+                     RESULT SUMMARY
+                ================================================== -->
+
+                <div class="result-summary">
+
+
+                    <div class="prediction-card">
+
+                        <div class="prediction-label">
+                            Detection Result
+                        </div>
+
+
+                        <div class="prediction-value">
+                            {{ label }}
+                        </div>
+
+
+                        <div class="confidence">
+
+                            <div class="confidence-top">
+
+                                <span>
+                                    Model Confidence
+                                </span>
+
+                                <span>
+                                    {{ confidence }}%
+                                </span>
+
+                            </div>
+
+
+                            <div class="confidence-bar">
+
+                                <div class="confidence-fill"></div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="model-card">
+
+                        <div class="model-card-title">
+                            Detection Model
+                        </div>
+
+
+                        <div class="model-name">
+                            ResNet18 CNN
+                        </div>
+
+
+                        <div class="model-description">
+                            Transfer-learning based convolutional
+                            neural network used for binary image
+                            classification.
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+
+
+                {% if analysis %}
+
+
+                <!-- =================================================
+                     METRICS
+                ================================================== -->
+
+                <h3 class="section-heading">
+                    Image Forensic Metrics
+                </h3>
+
+
+                <div class="metrics">
+
+
+                    <div class="metric-card">
+
+                        <span class="metric-label">
+                            Dimensions
+                        </span>
+
+                        <span class="metric-value">
+                            {{ analysis.width }}
+                            ×
+                            {{ analysis.height }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="metric-card">
+
+                        <span class="metric-label">
+                            Megapixels
+                        </span>
+
+                        <span class="metric-value">
+                            {{ analysis.megapixels }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="metric-card">
+
+                        <span class="metric-label">
+                            Brightness
+                        </span>
+
+                        <span class="metric-value">
+                            {{ analysis.brightness }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="metric-card">
+
+                        <span class="metric-label">
+                            Contrast
+                        </span>
+
+                        <span class="metric-value">
+                            {{ analysis.contrast }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="metric-card">
+
+                        <span class="metric-label">
+                            Sharpness
+                        </span>
+
+                        <span class="metric-value">
+                            {{ analysis.sharpness }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="metric-card">
+
+                        <span class="metric-label">
+                            Edge Density
+                        </span>
+
+                        <span class="metric-value">
+                            {{ analysis.edge_density }}
+                        </span>
+
+                    </div>
+
+
+                </div>
+
+
+                {% endif %}
+
+
+
+                <!-- =================================================
+                     REPORT
+                ================================================== -->
+
+                {% if report_filename %}
+
+                <div class="report-actions">
+
+
+                    <a
+                        href="{{ url_for('analysis_report', filename=filename) }}"
+                        target="_blank"
+                        class="report-btn view-report"
+                    >
+                        ◉ View PDF Report
+                    </a>
+
+
+                    <a
+                        href="{{ url_for('download_report', filename=filename) }}"
+                        class="report-btn download-report"
+                    >
+                        ↓ Download PDF Report
+                    </a>
+
+
+                </div>
+
+                {% endif %}
+
+
+            </div>
+
+        </section>
+
+
+        {% endif %}
+
+
+
+        <!-- =====================================================
+             FOOTER
+        ====================================================== -->
+
+        <footer>
+
+            Digital Image Processing
+            •
+            Deepfake Detection System
+            •
+            ResNet18 CNN
+
+        </footer>
+
+
+    </div>
+
+
+
+    <!-- =========================================================
+         JAVASCRIPT
+    ========================================================== -->
+
+    <script>
+
+
+        const fileInput =
+            document.getElementById("fileInput");
+
+
+        const uploadArea =
+            document.getElementById("uploadArea");
+
+
+        const chooseButton =
+            document.getElementById("chooseButton");
+
+
+        const fileName =
+            document.getElementById("fileName");
+
+
+        const previewSection =
+            document.getElementById("previewSection");
+
+
+        const previewImage =
+            document.getElementById("previewImage");
+
+
+        const uploadForm =
+            document.getElementById("uploadForm");
+
+
+        const analyzeButton =
+            document.getElementById("analyzeButton");
+
+
+        const loading =
+            document.getElementById("loading");
+
+
+
+        /* =====================================================
+           CHOOSE FILE
+        ====================================================== */
+
+        chooseButton.addEventListener(
+            "click",
+            function(event) {
+
+                event.stopPropagation();
+
+                fileInput.click();
+
+            }
+        );
+
+
+
+        /* =====================================================
+           CLICK UPLOAD AREA
+        ====================================================== */
+
+        uploadArea.addEventListener(
+            "click",
+            function(event) {
+
+                if (
+                    event.target !== chooseButton
+                    &&
+                    !chooseButton.contains(event.target)
+                ) {
+
+                    fileInput.click();
+
+                }
+
+            }
+        );
+
+
+
+        /* =====================================================
+           FILE SELECTION
+        ====================================================== */
+
+        fileInput.addEventListener(
+            "change",
+            function() {
+
+                if (
+                    this.files.length > 0
+                ) {
+
+                    handleFile(
+                        this.files[0]
+                    );
+
+                }
+
+            }
+        );
+
+
+
+        /* =====================================================
+           HANDLE FILE
+        ====================================================== */
+
+        function handleFile(file) {
+
+
+            const allowedTypes = [
+                "image/jpeg",
+                "image/png"
+            ];
+
+
+            if (
+                !allowedTypes.includes(
+                    file.type
+                )
+            ) {
+
+                alert(
+                    "Please select a JPG, JPEG or PNG image."
+                );
+
+                fileInput.value = "";
+
+                return;
+            }
+
+
+            fileName.textContent =
+                file.name;
+
+
+            const reader =
+                new FileReader();
+
+
+            reader.onload =
+                function(event) {
+
+                    previewImage.src =
+                        event.target.result;
+
+                    previewSection.classList.add(
+                        "show"
+                    );
+
+                };
+
+
+            reader.readAsDataURL(
+                file
+            );
+
+        }
+
+
+
+        /* =====================================================
+           DRAG OVER
+        ====================================================== */
+
+        uploadArea.addEventListener(
+            "dragover",
+            function(event) {
+
+                event.preventDefault();
+
+                uploadArea.classList.add(
+                    "dragover"
+                );
+
+            }
+        );
+
+
+
+        /* =====================================================
+           DRAG LEAVE
+        ====================================================== */
+
+        uploadArea.addEventListener(
+            "dragleave",
+            function() {
+
+                uploadArea.classList.remove(
+                    "dragover"
+                );
+
+            }
+        );
+
+
+
+        /* =====================================================
+           DROP
+        ====================================================== */
+
+        uploadArea.addEventListener(
+            "drop",
+            function(event) {
+
+                event.preventDefault();
+
+
+                uploadArea.classList.remove(
+                    "dragover"
+                );
+
+
+                const files =
+                    event.dataTransfer.files;
+
+
+                if (
+                    files.length === 0
+                ) {
+
+                    return;
+
+                }
+
+
+                const file =
+                    files[0];
+
+
+                const allowedTypes = [
+                    "image/jpeg",
+                    "image/png"
+                ];
+
+
+                if (
+                    !allowedTypes.includes(
+                        file.type
+                    )
+                ) {
+
+                    alert(
+                        "Please drop a JPG, JPEG or PNG image."
+                    );
+
+                    return;
+
+                }
+
+
+                fileInput.files =
+                    files;
+
+
+                handleFile(
+                    file
+                );
+
+            }
+        );
+
+
+
+        /* =====================================================
+           FORM SUBMIT
+        ====================================================== */
+
+        uploadForm.addEventListener(
+            "submit",
+            function(event) {
+
+
+                if (
+                    fileInput.files.length === 0
+                ) {
+
+                    event.preventDefault();
+
+                    alert(
+                        "Please select an image first."
+                    );
+
+                    return;
+
+                }
+
+
+                analyzeButton.disabled =
+                    true;
+
+
+                analyzeButton.textContent =
+                    "Analyzing Image...";
+
+
+                loading.classList.add(
+                    "show"
+                );
+
+            }
+        );
+
+
+    </script>
+
+
+</body>
+
+</html>
+
